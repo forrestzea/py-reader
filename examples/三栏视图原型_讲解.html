@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>三栏视图原型.html —— 三栏讲解视图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "Microsoft YaHei", sans-serif; height: 100vh; display: flex; flex-direction: column; background: #f0f2f5; }
+  header { background: #2c3e50; color: #fff; padding: 8px 16px; font-size: 14px; }
+  main { flex: 1; display: flex; overflow: hidden; }
+  .pane { overflow-y: auto; padding: 12px; }
+  .left { width: 40%; background: #1e1e1e; color: #d4d4d4; }
+  .middle { width: 33%; background: #fff; border-left: 1px solid #ddd; }
+  .right { width: 27%; background: #fdf6e3; border-left: 1px solid #ddd; }
+  h3 { font-size: 13px; color: #888; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .left h3 { color: #6a9955; }
+  pre { font-family: Consolas, monospace; font-size: 12.5px; line-height: 1.55; white-space: pre-wrap; word-break: break-all; }
+  .codeblock { border-radius: 6px; padding: 8px; margin-bottom: 6px; cursor: pointer; border: 1px solid transparent; }
+  .codeblock:hover, .codeblock.active { background: #2d2d30; border-color: #007acc; }
+  .tag { color: #569cd6; } .attr { color: #9cdcfe; } .str { color: #ce9178; } .cm { color: #6a9955; } .css { color: #d7ba7d; } .js { color: #dcdcaa; }
+  .exp { border-radius: 6px; padding: 10px; margin-bottom: 6px; font-size: 13px; line-height: 1.7; border: 1px solid transparent; }
+  .exp.active { background: #e8f4fd; border-color: #007acc; }
+  .exp b.t { color: #007acc; display: block; margin-bottom: 4px; }
+  .exp .tip { background: #fff8e1; border-left: 3px solid #ffc107; padding: 6px 8px; margin-top: 6px; font-size: 12px; border-radius: 0 4px 4px 0; }
+  .right h4 { font-size: 13px; margin: 12px 0 6px; color: #b58900; }
+  .right pre { background: #fff; border: 1px solid #e0d8b8; border-radius: 6px; padding: 8px; font-size: 12px; color: #333; }
+  .right p, .right li { font-size: 13px; line-height: 1.7; }
+  .right ul { padding-left: 18px; }
+  .output { background: #1e1e1e !important; color: #4ec9b0 !important; border: none !important; }
+</style>
+</head>
+<body>
+<header>📄 三栏视图原型.html —— 打开即讲解</header>
+<main>
+  <!-- 左栏：源代码 -->
+  <div class="pane left">
+    <h3>源代码（按结构分 7 段）</h3>
+
+    <div class="codeblock" data-s="1"><pre><span class="cm">&lt;!-- ① 文档头：告诉浏览器"我是谁" --&gt;</span>
+<span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="str">"zh-CN"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="str">"UTF-8"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;title&gt;</span>词频统计.py —— 三栏讲解视图<span class="tag">&lt;/title&gt;</span></pre></div>
+
+    <div class="codeblock" data-s="2"><pre><span class="cm">&lt;!-- ② 样式区（节选关键几行） --&gt;</span>
+<span class="tag">&lt;style&gt;</span>
+<span class="css">  body { display: flex; flex-direction: column; }</span>
+<span class="css">  main { flex: 1; display: flex; }</span>
+<span class="css">  .left   { width: 38%; background: #1e1e1e; }</span>
+<span class="css">  .middle { width: 34%; background: #fff; }</span>
+<span class="css">  .right  { width: 28%; background: #fdf6e3; }</span>
+<span class="css">  .codeblock.active { border-color: #007acc; }</span>
+<span class="tag">&lt;/style&gt;</span></pre></div>
+
+    <div class="codeblock" data-s="3"><pre><span class="cm">&lt;!-- ③ 顶部标题栏 --&gt;</span>
+<span class="tag">&lt;header&gt;</span>📄 示例代码_词频统计.py —— 打开即讲解<span class="tag">&lt;/header&gt;</span></pre></div>
+
+    <div class="codeblock" data-s="4"><pre><span class="cm">&lt;!-- ④ 左栏：源代码面板 --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"pane left"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"codeblock"</span> <span class="attr">data-s</span>=<span class="str">"1"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;pre&gt;</span><span class="tag">&lt;span</span> <span class="attr">class</span>=<span class="str">"kw"</span><span class="tag">&gt;</span>import<span class="tag">&lt;/span&gt;</span> re ...<span class="tag">&lt;/pre&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+  <span class="cm">&lt;!-- ...共6个codeblock，data-s分别是1~6 --&gt;</span>
+<span class="tag">&lt;/div&gt;</span></pre></div>
+
+    <div class="codeblock" data-s="5"><pre><span class="cm">&lt;!-- ⑤ 中栏：逐段解释面板 --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"pane middle"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"exp"</span> <span class="attr">data-s</span>=<span class="str">"1"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;b</span> <span class="attr">class</span>=<span class="str">"t"</span><span class="tag">&gt;</span>① 导入工具包<span class="tag">&lt;/b&gt;</span>
+    做菜前先把调料拿到灶台上...
+  <span class="tag">&lt;/div&gt;</span>
+  <span class="cm">&lt;!-- ...共6个exp，data-s与左侧一一对应 --&gt;</span>
+<span class="tag">&lt;/div&gt;</span></pre></div>
+
+    <div class="codeblock" data-s="6"><pre><span class="cm">&lt;!-- ⑥ 右栏：整体逻辑面板 --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"pane right"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;h4&gt;</span>📌 一句话概括<span class="tag">&lt;/h4&gt;</span>
+  <span class="tag">&lt;p&gt;</span>读一篇文章，统计每个单词...<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;h4&gt;</span>🖥️ 实际运行结果<span class="tag">&lt;/h4&gt;</span>
+  <span class="tag">&lt;pre</span> <span class="attr">class</span>=<span class="str">"output"</span><span class="tag">&gt;</span>python  5 次 ...<span class="tag">&lt;/pre&gt;</span>
+<span class="tag">&lt;/div&gt;</span></pre></div>
+
+    <div class="codeblock" data-s="7"><pre><span class="cm">&lt;!-- ⑦ 脚本：点击联动（核心逻辑节选） --&gt;</span>
+<span class="tag">&lt;script&gt;</span>
+<span class="js">  document.querySelectorAll('.codeblock').forEach(c =&gt; {</span>
+<span class="js">    c.onclick = () =&gt; {</span>
+<span class="js">      const e = document.querySelector(</span>
+<span class="js">        '.exp[data-s="' + c.dataset.s + '"]');</span>
+<span class="js">      e.classList.add('active');</span>
+<span class="js">      e.scrollIntoView({behavior:'smooth'});</span>
+<span class="js">    };</span>
+<span class="js">  });</span>
+<span class="tag">&lt;/script&gt;</span></pre></div>
+  </div>
+
+  <!-- 中栏：逐段解释 -->
+  <div class="pane middle">
+    <h3>逐段解释（点击左侧代码可定位）</h3>
+
+    <div class="exp" data-s="1"><b class="t">① 文档头：告诉浏览器"我是谁"</b>
+      学 HTML 先记住一句话：<b>标签是成对的盒子</b>，<span>&lt;html&gt;...&lt;/html&gt;</span> 告诉浏览器"这中间是一个网页"。
+      <br>· <b>&lt;!DOCTYPE html&gt;</b>：声明"这是现代网页"，固定写法，背下来即可。
+      <br>· <b>&lt;head&gt;</b>：网页的"档案袋"，放设置信息，<b>里面的内容不会显示在页面上</b>。
+      <br>· <b>charset="UTF-8"</b>：字符编码声明——告诉浏览器按 UTF-8 规则解读文字，少了它中文会变乱码。
+      <br>· <b>&lt;title&gt;</b>：浏览器标签页上显示的名字。
+      <div class="tip">生活类比：head 像快递单（写给系统看的），body 才是包裹里的东西（给人看的）。</div></div>
+
+    <div class="exp" data-s="2"><b class="t">② 样式区：控制"长什么样"</b>
+      <b>&lt;style&gt;</b> 里写的是 CSS——一种专门描述外观的语言：颜色、宽度、间距、边框。HTML 管结构，CSS 管装修。
+      <br>· <b>display: flex</b>：弹性布局——让子元素像书架上并排的书一样横向排开。本页的三栏就是靠 main 里的 flex 排出来的。
+      <br>· <b>.left { width: 38% }</b>：以 <b>.</b> 开头表示"按 class 名字选人"——所有 class="left" 的元素都套用这条规则。三栏宽度 38/34/28，加起来正好 100%。
+      <br>· <b>#1e1e1e</b> 这类是颜色的十六进制写法：# 后面 6 位，两位一组分别表示红、绿、蓝的浓度。
+      <br>· <b>.active</b>：被点击时的"高亮样式"，后面脚本会给点中的块加上它。
+      <div class="tip">⭐ 常见疑惑：CSS 为什么不写在 HTML 标签里？——集中写在 style 里，改一处全页面生效，这就是"结构与样式分离"的思想。</div></div>
+
+    <div class="exp" data-s="3"><b class="t">③ 顶部标题栏</b>
+      <b>&lt;header&gt;</b> 是"语义化标签"——作用和 &lt;div&gt; 一样是个盒子，但名字本身说明了用途（页眉），方便人和搜索引擎理解。里面就是一行标题文字。</div>
+
+    <div class="exp" data-s="4"><b class="t">④ 左栏：源代码面板</b>
+      左栏是一个 class="pane left" 的 <b>&lt;div&gt;</b>（div = 通用盒子，网页里最常见的积木）。里面放着 6 个 <b>codeblock</b> 盒子，每个装一段代码。
+      <br>· <b>data-s="1"</b>：自定义属性——标签上自己贴的便利贴，内容是编号。<b>这是左右联动的钥匙</b>：左边代码块贴 data-s="1"，中栏对应的解释也贴 data-s="1"，脚本靠编号把它们配成对。
+      <br>· <b>&lt;pre&gt;</b>：预格式文本标签——保留代码里的换行和空格，代码显示必备。
+      <br>· 代码里的彩色是靠 &lt;span class="kw"&gt;（关键字蓝色）、class="str"（字符串橙色）等手工标记的。
+      <div class="tip">注意：左栏显示的代码&lt;和&gt;都写成了 &amp;lt; &amp;gt;——这是 HTML 转义，因为浏览器会把真正的 &lt;&gt; 当成标签解析掉。</div></div>
+
+    <div class="exp" data-s="5"><b class="t">⑤ 中栏：逐段解释面板</b>
+      结构与左栏完全对称：6 个 <b>exp</b>（解释）盒子，同样贴 data-s 编号，与左侧一一对应。
+      <br>· 每个解释块里：&lt;b class="t"&gt; 是蓝色小标题，正文是大白话讲解。
+      <br>· 第⑥段解释里那个黄色"⭐ 常见疑惑"框，是用 CSS 的 border-left（左边框）+ 背景色画出来的——你现在看到的本页中栏也是完全一样的做法。
+      <div class="tip">发现了吗？这个文件本身就是"用三栏讲解页讲解三栏讲解页"——你现在点的每一块，讲解的都是你正在看的这个东西。</div></div>
+
+    <div class="exp" data-s="6"><b class="t">⑥ 右栏：整体逻辑面板</b>
+      静态内容区：概括、调用关系、数据流、运行结果、常见报错，全部写死在 HTML 里。
+      <br>· 米色背景（#fdf6e3）+ 棕色小标题，视觉上和左中两栏区分开。
+      <br>· 运行结果用 class="output" 的 pre 显示：深色底、青绿色字，模拟终端的样子。
+      <br>这一栏没有任何交互，纯展示——所以代码最简单，全是文字和排版。</div>
+
+    <div class="exp" data-s="7"><b class="t">⑦ 脚本区：让页面"能点"</b>
+      <b>&lt;script&gt;</b> 里写的是 JavaScript——网页的"动作语言"。HTML 是骨架、CSS 是皮肤、JS 是肌肉。
+      <br>这段脚本做的事，翻译成大白话就三步：
+      <br><b>1.</b> querySelectorAll('.codeblock')：把页面上所有代码块找出来，排成一个名单
+      <br><b>2.</b> 给每个代码块挂一个"点击响应"（onclick）：你点它，它就执行后面大括号里的事
+      <br><b>3.</b> 点中时：读出这个块的 data-s 编号 → 用编号找到中栏同款编号的解释块 → 给它加上 active 高亮样式 → scrollIntoView 滚动到它
+      <br>（文件后半还有一段几乎相同的代码，方向反过来：点解释找代码。）
+      <div class="tip">⭐ 常见疑惑：=＞ 是什么？——"箭头函数"，就是"点中后要执行的动作"的简写。先理解作用，写法细节以后再抠。</div></div>
+  </div>
+
+  <!-- 右栏：整体逻辑与运行结果 -->
+  <div class="pane right">
+    <h3>整体逻辑 · 结构 · 效果</h3>
+    <h4>📌 一句话概括</h4>
+    <p>这是一个"代码讲解页"：用浏览器把一份 Python 代码和它的解释三栏并排展示，点击任意一边可以定位对照另一边。</p>
+    <h4>🧱 网页的三层结构</h4>
+    <pre>HTML（骨架）
+ ├─ head   设置区：编码、标题
+ └─ body   内容区
+     ├─ header  顶部标题栏
+     └─ main    三栏（左/中/右）
+CSS（皮肤）  → 决定三栏宽度、配色、高亮样式
+JS（肌肉）   → 实现"点击互找"的联动</pre>
+    <h4>🖱️ 交互怎么发生</h4>
+    <pre>你点击左侧代码块
+ → JS 读出它的 data-s 编号
+ → 按编号找到中栏对应解释
+ → 两边同时加高亮
+ → 解释块滚动到视野中间</pre>
+    <h4>🖥️ 浏览器里看到的效果</h4>
+    <pre class="output">顶部：深色标题栏
+左栏：黑底彩色代码（6 段）
+中栏：白底解释（6 块）
+右栏：米色逻辑总结
+点任意代码块 → 对应解释
+蓝框高亮并自动滚动到位</pre>
+    <h4>⚠️ 常见问题</h4>
+    <ul>
+      <li>中文乱码 → 文件须以 UTF-8 保存（本文件已是）</li>
+      <li>点击无反应 → 浏览器禁用了 JavaScript</li>
+      <li>布局挤变形 → 窗口太窄，三栏按百分比分配宽度</li>
+    </ul>
+  </div>
+</main>
+<script>
+  document.querySelectorAll('.codeblock').forEach(c => {
+    c.onclick = () => {
+      document.querySelectorAll('.codeblock,.exp').forEach(x => x.classList.remove('active'));
+      c.classList.add('active');
+      const e = document.querySelector('.exp[data-s="' + c.dataset.s + '"]');
+      e.classList.add('active');
+      e.scrollIntoView({behavior: 'smooth', block: 'center'});
+    };
+  });
+  document.querySelectorAll('.exp').forEach(e => {
+    e.onclick = () => {
+      document.querySelectorAll('.codeblock,.exp').forEach(x => x.classList.remove('active'));
+      e.classList.add('active');
+      const c = document.querySelector('.codeblock[data-s="' + e.dataset.s + '"]');
+      c.classList.add('active');
+      c.scrollIntoView({behavior: 'smooth', block: 'center'});
+    };
+  });
+</script>
+</body>
+</html>

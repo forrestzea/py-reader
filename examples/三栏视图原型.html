@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>词频统计.py —— 三栏讲解视图（产品原型演示）</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "Microsoft YaHei", sans-serif; height: 100vh; display: flex; flex-direction: column; background: #f0f2f5; }
+  header { background: #2c3e50; color: #fff; padding: 8px 16px; font-size: 14px; }
+  main { flex: 1; display: flex; overflow: hidden; }
+  .pane { overflow-y: auto; padding: 12px; }
+  .left { width: 38%; background: #1e1e1e; color: #d4d4d4; }
+  .middle { width: 34%; background: #fff; border-left: 1px solid #ddd; }
+  .right { width: 28%; background: #fdf6e3; border-left: 1px solid #ddd; }
+  h3 { font-size: 13px; color: #888; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .left h3 { color: #6a9955; }
+  pre { font-family: Consolas, monospace; font-size: 13px; line-height: 1.6; white-space: pre-wrap; }
+  .codeblock { border-radius: 6px; padding: 8px; margin-bottom: 6px; cursor: pointer; border: 1px solid transparent; }
+  .codeblock:hover, .codeblock.active { background: #2d2d30; border-color: #007acc; }
+  .kw { color: #569cd6; } .str { color: #ce9178; } .fn { color: #dcdcaa; } .cm { color: #6a9955; }
+  .exp { border-radius: 6px; padding: 10px; margin-bottom: 6px; font-size: 13px; line-height: 1.7; border: 1px solid transparent; }
+  .exp.active { background: #e8f4fd; border-color: #007acc; }
+  .exp b.t { color: #007acc; display: block; margin-bottom: 4px; }
+  .exp .tip { background: #fff8e1; border-left: 3px solid #ffc107; padding: 6px 8px; margin-top: 6px; font-size: 12px; border-radius: 0 4px 4px 0; }
+  .right h4 { font-size: 13px; margin: 12px 0 6px; color: #b58900; }
+  .right pre { background: #fff; border: 1px solid #e0d8b8; border-radius: 6px; padding: 8px; font-size: 12px; color: #333; }
+  .right p, .right li { font-size: 13px; line-height: 1.7; }
+  .right ul { padding-left: 18px; }
+  .output { background: #1e1e1e !important; color: #4ec9b0 !important; border: none !important; }
+</style>
+</head>
+<body>
+<header>📄 示例代码_词频统计.py —— 打开即讲解 · 三栏视图原型</header>
+<main>
+  <!-- 左栏：源代码 -->
+  <div class="pane left">
+    <h3>源代码</h3>
+    <div class="codeblock" data-s="1"><pre><span class="cm">"""词频统计小工具"""</span>
+<span class="kw">import</span> re
+<span class="kw">from</span> collections <span class="kw">import</span> Counter</pre></div>
+    <div class="codeblock" data-s="2"><pre><span class="kw">def</span> <span class="fn">read_file</span>(file_path):
+    <span class="kw">with</span> <span class="fn">open</span>(file_path, <span class="str">"r"</span>, encoding=<span class="str">"utf-8"</span>) <span class="kw">as</span> f:
+        text = f.read()
+    <span class="kw">return</span> text</pre></div>
+    <div class="codeblock" data-s="3"><pre><span class="kw">def</span> <span class="fn">split_words</span>(text):
+    words = re.findall(<span class="str">r"[a-zA-Z]+"</span>, text.lower())
+    <span class="kw">return</span> words</pre></div>
+    <div class="codeblock" data-s="4"><pre><span class="kw">def</span> <span class="fn">count_words</span>(words):
+    counter = <span class="fn">Counter</span>(words)
+    <span class="kw">return</span> counter</pre></div>
+    <div class="codeblock" data-s="5"><pre><span class="kw">def</span> <span class="fn">show_top</span>(counter, top_n=<span class="str">5</span>):
+    <span class="fn">print</span>(<span class="str">"===== 单词出现次数排行 ====="</span>)
+    <span class="kw">for</span> word, count <span class="kw">in</span> counter.most_common(top_n):
+        <span class="fn">print</span>(<span class="str">f"{word:&lt;15} {count} 次"</span>)</pre></div>
+    <div class="codeblock" data-s="6"><pre><span class="kw">def</span> <span class="fn">main</span>():
+    file_path = <span class="str">"article.txt"</span>
+    text = <span class="fn">read_file</span>(file_path)
+    words = <span class="fn">split_words</span>(text)
+    counter = <span class="fn">count_words</span>(words)
+    <span class="fn">show_top</span>(counter)
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    <span class="fn">main</span>()</pre></div>
+  </div>
+
+  <!-- 中栏：逐段解释 -->
+  <div class="pane middle">
+    <h3>逐段解释（点击左侧代码可定位）</h3>
+    <div class="exp" data-s="1"><b class="t">① 导入工具包</b>
+      做菜前先把调料拿到灶台上。<b>import</b>（导入）就是"借工具"：re 是正则表达式工具箱（按规则查找文字），Counter 是专门数"每个东西出现几次"的计数器。</div>
+    <div class="exp" data-s="2"><b class="t">② read_file：读文件</b>
+      <b>函数</b>——把一段功能打包起个名字，像菜谱，写一次用无数次。with open 打开文件并自动关闭；"r" 表示只读；utf-8 防止中文乱码；return 把读到的内容交还出去。</div>
+    <div class="exp" data-s="3"><b class="t">③ split_words：切单词</b>
+      text.lower() 把字母全转小写（让 Python 和 python 算同一个词）；正则 [a-zA-Z]+ 表示"连续英文字母"，把所有单词挑出来组成列表，标点数字自动忽略。</div>
+    <div class="exp" data-s="4"><b class="t">④ count_words：数数</b>
+      把单词列表交给 Counter，自动数出每个词出现几次。结果像词典：单词 → 次数。一行顶别人十行，这就是 Python 的风格。</div>
+    <div class="exp" data-s="5"><b class="t">⑤ show_top：打印排行榜</b>
+      top_n=5 是带默认值的参数（不传就显示前5名）；for 循环把排行榜逐项处理，像点名；f-string 把单词和次数填进字符串，&lt;15 让输出对齐整齐。</div>
+    <div class="exp" data-s="6"><b class="t">⑥ main：总指挥 + 程序入口</b>
+      把四个功能按顺序串起来：读文件→切单词→数数→打印。
+      <div class="tip">⭐ 常见疑惑：if __name__ == "__main__" 意思是"只有直接运行本文件时才执行 main()"，被别的程序借用时不执行。先背下来，原理以后懂。</div></div>
+  </div>
+
+  <!-- 右栏：整体逻辑与运行结果 -->
+  <div class="pane right">
+    <h3>整体逻辑 · 运行流程 · 结果</h3>
+    <h4>📌 一句话概括</h4>
+    <p>读一篇文章，统计每个英文单词出现几次，打印前 5 名。</p>
+    <h4>🔗 谁调用谁</h4>
+    <pre>main()
+ ├─ read_file()    读 article.txt
+ ├─ split_words()  切成单词列表
+ ├─ count_words()  统计次数
+ └─ show_top()     打印排行榜</pre>
+    <h4>🌊 数据怎么流</h4>
+    <pre>article.txt
+ → 整段文字
+ → 单词列表
+ → {单词: 次数}
+ → 屏幕排行榜</pre>
+    <h4>🖥️ 实际运行结果</h4>
+    <pre class="output">===== 单词出现次数排行 =====
+python          5 次
+is              3 次
+learning        3 次
+language        2 次
+easy            2 次</pre>
+    <h4>⚠️ 常见报错</h4>
+    <ul>
+      <li>FileNotFoundError：旁边没有 article.txt</li>
+      <li>中文统计不出：[a-zA-Z]+ 只认英文</li>
+    </ul>
+  </div>
+</main>
+<script>
+  // 左右联动：点击代码块，高亮对应解释；点击解释，定位对应代码
+  document.querySelectorAll('.codeblock').forEach(c => {
+    c.onclick = () => {
+      document.querySelectorAll('.codeblock,.exp').forEach(x => x.classList.remove('active'));
+      c.classList.add('active');
+      const e = document.querySelector('.exp[data-s="' + c.dataset.s + '"]');
+      e.classList.add('active');
+      e.scrollIntoView({behavior: 'smooth', block: 'center'});
+    };
+  });
+  document.querySelectorAll('.exp').forEach(e => {
+    e.onclick = () => {
+      document.querySelectorAll('.codeblock,.exp').forEach(x => x.classList.remove('active'));
+      e.classList.add('active');
+      const c = document.querySelector('.codeblock[data-s="' + e.dataset.s + '"]');
+      c.classList.add('active');
+      c.scrollIntoView({behavior: 'smooth', block: 'center'});
+    };
+  });
+</script>
+</body>
+</html>

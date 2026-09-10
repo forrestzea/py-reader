@@ -1,0 +1,3 @@
+Python is a popular programming language. Python is easy to learn and easy to read.
+Many people learn Python as their first language because Python code looks like English.
+Learning Python is fun, and practice makes learning easier. Keep learning, keep coding!
