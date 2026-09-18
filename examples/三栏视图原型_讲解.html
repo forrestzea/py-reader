@@ -1,204 +1,215 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<title>三栏视图原型.html —— 三栏讲解视图</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: "Microsoft YaHei", sans-serif; height: 100vh; display: flex; flex-direction: column; background: #f0f2f5; }
-  header { background: #2c3e50; color: #fff; padding: 8px 16px; font-size: 14px; }
-  main { flex: 1; display: flex; overflow: hidden; }
-  .pane { overflow-y: auto; padding: 12px; }
-  .left { width: 40%; background: #1e1e1e; color: #d4d4d4; }
-  .middle { width: 33%; background: #fff; border-left: 1px solid #ddd; }
-  .right { width: 27%; background: #fdf6e3; border-left: 1px solid #ddd; }
-  h3 { font-size: 13px; color: #888; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-  .left h3 { color: #6a9955; }
-  pre { font-family: Consolas, monospace; font-size: 12.5px; line-height: 1.55; white-space: pre-wrap; word-break: break-all; }
-  .codeblock { border-radius: 6px; padding: 8px; margin-bottom: 6px; cursor: pointer; border: 1px solid transparent; }
-  .codeblock:hover, .codeblock.active { background: #2d2d30; border-color: #007acc; }
-  .tag { color: #569cd6; } .attr { color: #9cdcfe; } .str { color: #ce9178; } .cm { color: #6a9955; } .css { color: #d7ba7d; } .js { color: #dcdcaa; }
-  .exp { border-radius: 6px; padding: 10px; margin-bottom: 6px; font-size: 13px; line-height: 1.7; border: 1px solid transparent; }
-  .exp.active { background: #e8f4fd; border-color: #007acc; }
-  .exp b.t { color: #007acc; display: block; margin-bottom: 4px; }
-  .exp .tip { background: #fff8e1; border-left: 3px solid #ffc107; padding: 6px 8px; margin-top: 6px; font-size: 12px; border-radius: 0 4px 4px 0; }
-  .right h4 { font-size: 13px; margin: 12px 0 6px; color: #b58900; }
-  .right pre { background: #fff; border: 1px solid #e0d8b8; border-radius: 6px; padding: 8px; font-size: 12px; color: #333; }
-  .right p, .right li { font-size: 13px; line-height: 1.7; }
-  .right ul { padding-left: 18px; }
-  .output { background: #1e1e1e !important; color: #4ec9b0 !important; border: none !important; }
-</style>
-</head>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>三栏视图原型.html · 三栏讲解(v3.0 详细版)</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:#f4f5f7;color:#2b2f36;font-size:14px}
+header{position:fixed;top:0;left:0;right:0;height:52px;background:#1f2733;color:#fff;display:flex;align-items:center;padding:0 20px;z-index:10}
+header h1{font-size:16px;font-weight:600}
+header span{margin-left:14px;font-size:12px;color:#9aa7b8}
+main{display:grid;grid-template-columns:40% 42% 18%;padding-top:52px;height:100vh}
+.col{overflow-y:auto;padding:14px 16px 40px}
+#col-code{background:#1e2430}
+#col-exp{background:#f4f5f7;border-left:1px solid #d9dee5;border-right:1px solid #d9dee5}
+#col-right{background:#fff}
+h2.col-title{position:sticky;top:-14px;background:inherit;padding:8px 0;font-size:13px;color:#7a8699;letter-spacing:2px;z-index:5}
+#col-code h2.col-title{color:#8fa3c0;background:#1e2430}
+.code-block{background:#252c3a;border:1px solid #333d52;border-radius:8px;margin-bottom:10px;cursor:pointer;transition:border-color .15s}
+.code-block.active{border-color:#4da3ff;box-shadow:0 0 0 2px rgba(77,163,255,.25)}
+.code-block pre{padding:10px 12px;overflow-x:auto;font-family:Consolas,"Courier New",monospace;font-size:12.5px;line-height:1.6;color:#c8d3e8;white-space:pre-wrap;word-break:break-all}
+.ln{display:inline-block;width:2.4em;color:#5b6b85;user-select:none;text-align:right;margin-right:10px}
+.kw{color:#7cb7ff}.st{color:#f0a868}.cm{color:#6a9955;font-style:italic}
+.mid-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;position:sticky;top:-14px;background:#f4f5f7;padding:10px 0;z-index:5}
+.mid-head .badge{background:#4da3ff;color:#fff;font-size:12px;padding:3px 10px;border-radius:12px;white-space:nowrap}
+.mid-head .mtitle{font-size:13px;color:#4a5568;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav-btn{border:1px solid #c9d2dd;background:#fff;color:#4a5568;font-size:12px;padding:4px 12px;border-radius:6px;cursor:pointer}
+.nav-btn:hover{background:#eef4fb;border-color:#4da3ff;color:#1f6fd6}
+.detail{display:none;background:#fff;border:1px solid #e2e6ec;border-radius:10px;padding:16px 18px}
+.detail.show{display:block}
+.detail h4{font-size:14px;color:#1f2733;margin:16px 0 8px;border-left:3px solid #4da3ff;padding-left:8px}
+.detail h4:first-child{margin-top:0}
+.detail p{line-height:1.85;color:#3a414c;margin-bottom:6px}
+.detail ul{margin:4px 0 8px 2px;list-style:none}
+.detail li{line-height:1.8;color:#3a414c;margin-bottom:4px;padding-left:2px}
+.detail li::before{content:"· ";color:#4da3ff;font-weight:700}
+.detail code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-family:Consolas,monospace;font-size:12.5px;color:#c44536}
+.term{border:1px solid #e4e9f0;border-radius:8px;padding:10px 12px;margin-bottom:8px;background:#fbfcfe}
+.term .tname{font-weight:700;color:#1f6fd6;font-size:13.5px;margin-bottom:6px}
+.term .trow{margin-bottom:3px;line-height:1.75;color:#3a414c;font-size:13.5px}
+.term .trow b{color:#1f2733}
+.faq{background:#fff8ec;border:1px solid #f2dfae;border-radius:8px;padding:10px 12px;margin-bottom:8px}
+.faq p{line-height:1.8;color:#6b5416;font-size:13.5px}
+#col-right h3{font-size:13px;margin:18px 0 8px;color:#1f2733;border-left:3px solid #4da3ff;padding-left:8px}
+#col-right h3:first-child{margin-top:4px}
+#col-right p{line-height:1.8;color:#4a5260;margin-bottom:8px}
+pre.tree{background:#f2f5f9;border:1px solid #e0e5ec;border-radius:6px;padding:10px;font-family:Consolas,monospace;font-size:12.5px;line-height:1.7;color:#374151;overflow-x:auto;white-space:pre}
+</style></head>
 <body>
-<header>📄 三栏视图原型.html —— 打开即讲解</header>
-<main>
-  <!-- 左栏：源代码 -->
-  <div class="pane left">
-    <h3>源代码（按结构分 7 段）</h3>
-
-    <div class="codeblock" data-s="1"><pre><span class="cm">&lt;!-- ① 文档头：告诉浏览器"我是谁" --&gt;</span>
-<span class="tag">&lt;!DOCTYPE html&gt;</span>
-<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="str">"zh-CN"</span><span class="tag">&gt;</span>
-<span class="tag">&lt;head&gt;</span>
-<span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="str">"UTF-8"</span><span class="tag">&gt;</span>
-<span class="tag">&lt;title&gt;</span>词频统计.py —— 三栏讲解视图<span class="tag">&lt;/title&gt;</span></pre></div>
-
-    <div class="codeblock" data-s="2"><pre><span class="cm">&lt;!-- ② 样式区（节选关键几行） --&gt;</span>
-<span class="tag">&lt;style&gt;</span>
-<span class="css">  body { display: flex; flex-direction: column; }</span>
-<span class="css">  main { flex: 1; display: flex; }</span>
-<span class="css">  .left   { width: 38%; background: #1e1e1e; }</span>
-<span class="css">  .middle { width: 34%; background: #fff; }</span>
-<span class="css">  .right  { width: 28%; background: #fdf6e3; }</span>
-<span class="css">  .codeblock.active { border-color: #007acc; }</span>
-<span class="tag">&lt;/style&gt;</span></pre></div>
-
-    <div class="codeblock" data-s="3"><pre><span class="cm">&lt;!-- ③ 顶部标题栏 --&gt;</span>
-<span class="tag">&lt;header&gt;</span>📄 示例代码_词频统计.py —— 打开即讲解<span class="tag">&lt;/header&gt;</span></pre></div>
-
-    <div class="codeblock" data-s="4"><pre><span class="cm">&lt;!-- ④ 左栏：源代码面板 --&gt;</span>
-<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"pane left"</span><span class="tag">&gt;</span>
-  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"codeblock"</span> <span class="attr">data-s</span>=<span class="str">"1"</span><span class="tag">&gt;</span>
-    <span class="tag">&lt;pre&gt;</span><span class="tag">&lt;span</span> <span class="attr">class</span>=<span class="str">"kw"</span><span class="tag">&gt;</span>import<span class="tag">&lt;/span&gt;</span> re ...<span class="tag">&lt;/pre&gt;</span>
-  <span class="tag">&lt;/div&gt;</span>
-  <span class="cm">&lt;!-- ...共6个codeblock，data-s分别是1~6 --&gt;</span>
-<span class="tag">&lt;/div&gt;</span></pre></div>
-
-    <div class="codeblock" data-s="5"><pre><span class="cm">&lt;!-- ⑤ 中栏：逐段解释面板 --&gt;</span>
-<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"pane middle"</span><span class="tag">&gt;</span>
-  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"exp"</span> <span class="attr">data-s</span>=<span class="str">"1"</span><span class="tag">&gt;</span>
-    <span class="tag">&lt;b</span> <span class="attr">class</span>=<span class="str">"t"</span><span class="tag">&gt;</span>① 导入工具包<span class="tag">&lt;/b&gt;</span>
-    做菜前先把调料拿到灶台上...
-  <span class="tag">&lt;/div&gt;</span>
-  <span class="cm">&lt;!-- ...共6个exp，data-s与左侧一一对应 --&gt;</span>
-<span class="tag">&lt;/div&gt;</span></pre></div>
-
-    <div class="codeblock" data-s="6"><pre><span class="cm">&lt;!-- ⑥ 右栏：整体逻辑面板 --&gt;</span>
-<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"pane right"</span><span class="tag">&gt;</span>
-  <span class="tag">&lt;h4&gt;</span>📌 一句话概括<span class="tag">&lt;/h4&gt;</span>
-  <span class="tag">&lt;p&gt;</span>读一篇文章，统计每个单词...<span class="tag">&lt;/p&gt;</span>
-  <span class="tag">&lt;h4&gt;</span>🖥️ 实际运行结果<span class="tag">&lt;/h4&gt;</span>
-  <span class="tag">&lt;pre</span> <span class="attr">class</span>=<span class="str">"output"</span><span class="tag">&gt;</span>python  5 次 ...<span class="tag">&lt;/pre&gt;</span>
-<span class="tag">&lt;/div&gt;</span></pre></div>
-
-    <div class="codeblock" data-s="7"><pre><span class="cm">&lt;!-- ⑦ 脚本：点击联动（核心逻辑节选） --&gt;</span>
-<span class="tag">&lt;script&gt;</span>
-<span class="js">  document.querySelectorAll('.codeblock').forEach(c =&gt; {</span>
-<span class="js">    c.onclick = () =&gt; {</span>
-<span class="js">      const e = document.querySelector(</span>
-<span class="js">        '.exp[data-s="' + c.dataset.s + '"]');</span>
-<span class="js">      e.classList.add('active');</span>
-<span class="js">      e.scrollIntoView({behavior:'smooth'});</span>
-<span class="js">    };</span>
-<span class="js">  });</span>
-<span class="tag">&lt;/script&gt;</span></pre></div>
-  </div>
-
-  <!-- 中栏：逐段解释 -->
-  <div class="pane middle">
-    <h3>逐段解释（点击左侧代码可定位）</h3>
-
-    <div class="exp" data-s="1"><b class="t">① 文档头：告诉浏览器"我是谁"</b>
-      学 HTML 先记住一句话：<b>标签是成对的盒子</b>，<span>&lt;html&gt;...&lt;/html&gt;</span> 告诉浏览器"这中间是一个网页"。
-      <br>· <b>&lt;!DOCTYPE html&gt;</b>：声明"这是现代网页"，固定写法，背下来即可。
-      <br>· <b>&lt;head&gt;</b>：网页的"档案袋"，放设置信息，<b>里面的内容不会显示在页面上</b>。
-      <br>· <b>charset="UTF-8"</b>：字符编码声明——告诉浏览器按 UTF-8 规则解读文字，少了它中文会变乱码。
-      <br>· <b>&lt;title&gt;</b>：浏览器标签页上显示的名字。
-      <div class="tip">生活类比：head 像快递单（写给系统看的），body 才是包裹里的东西（给人看的）。</div></div>
-
-    <div class="exp" data-s="2"><b class="t">② 样式区：控制"长什么样"</b>
-      <b>&lt;style&gt;</b> 里写的是 CSS——一种专门描述外观的语言：颜色、宽度、间距、边框。HTML 管结构，CSS 管装修。
-      <br>· <b>display: flex</b>：弹性布局——让子元素像书架上并排的书一样横向排开。本页的三栏就是靠 main 里的 flex 排出来的。
-      <br>· <b>.left { width: 38% }</b>：以 <b>.</b> 开头表示"按 class 名字选人"——所有 class="left" 的元素都套用这条规则。三栏宽度 38/34/28，加起来正好 100%。
-      <br>· <b>#1e1e1e</b> 这类是颜色的十六进制写法：# 后面 6 位，两位一组分别表示红、绿、蓝的浓度。
-      <br>· <b>.active</b>：被点击时的"高亮样式"，后面脚本会给点中的块加上它。
-      <div class="tip">⭐ 常见疑惑：CSS 为什么不写在 HTML 标签里？——集中写在 style 里，改一处全页面生效，这就是"结构与样式分离"的思想。</div></div>
-
-    <div class="exp" data-s="3"><b class="t">③ 顶部标题栏</b>
-      <b>&lt;header&gt;</b> 是"语义化标签"——作用和 &lt;div&gt; 一样是个盒子，但名字本身说明了用途（页眉），方便人和搜索引擎理解。里面就是一行标题文字。</div>
-
-    <div class="exp" data-s="4"><b class="t">④ 左栏：源代码面板</b>
-      左栏是一个 class="pane left" 的 <b>&lt;div&gt;</b>（div = 通用盒子，网页里最常见的积木）。里面放着 6 个 <b>codeblock</b> 盒子，每个装一段代码。
-      <br>· <b>data-s="1"</b>：自定义属性——标签上自己贴的便利贴，内容是编号。<b>这是左右联动的钥匙</b>：左边代码块贴 data-s="1"，中栏对应的解释也贴 data-s="1"，脚本靠编号把它们配成对。
-      <br>· <b>&lt;pre&gt;</b>：预格式文本标签——保留代码里的换行和空格，代码显示必备。
-      <br>· 代码里的彩色是靠 &lt;span class="kw"&gt;（关键字蓝色）、class="str"（字符串橙色）等手工标记的。
-      <div class="tip">注意：左栏显示的代码&lt;和&gt;都写成了 &amp;lt; &amp;gt;——这是 HTML 转义，因为浏览器会把真正的 &lt;&gt; 当成标签解析掉。</div></div>
-
-    <div class="exp" data-s="5"><b class="t">⑤ 中栏：逐段解释面板</b>
-      结构与左栏完全对称：6 个 <b>exp</b>（解释）盒子，同样贴 data-s 编号，与左侧一一对应。
-      <br>· 每个解释块里：&lt;b class="t"&gt; 是蓝色小标题，正文是大白话讲解。
-      <br>· 第⑥段解释里那个黄色"⭐ 常见疑惑"框，是用 CSS 的 border-left（左边框）+ 背景色画出来的——你现在看到的本页中栏也是完全一样的做法。
-      <div class="tip">发现了吗？这个文件本身就是"用三栏讲解页讲解三栏讲解页"——你现在点的每一块，讲解的都是你正在看的这个东西。</div></div>
-
-    <div class="exp" data-s="6"><b class="t">⑥ 右栏：整体逻辑面板</b>
-      静态内容区：概括、调用关系、数据流、运行结果、常见报错，全部写死在 HTML 里。
-      <br>· 米色背景（#fdf6e3）+ 棕色小标题，视觉上和左中两栏区分开。
-      <br>· 运行结果用 class="output" 的 pre 显示：深色底、青绿色字，模拟终端的样子。
-      <br>这一栏没有任何交互，纯展示——所以代码最简单，全是文字和排版。</div>
-
-    <div class="exp" data-s="7"><b class="t">⑦ 脚本区：让页面"能点"</b>
-      <b>&lt;script&gt;</b> 里写的是 JavaScript——网页的"动作语言"。HTML 是骨架、CSS 是皮肤、JS 是肌肉。
-      <br>这段脚本做的事，翻译成大白话就三步：
-      <br><b>1.</b> querySelectorAll('.codeblock')：把页面上所有代码块找出来，排成一个名单
-      <br><b>2.</b> 给每个代码块挂一个"点击响应"（onclick）：你点它，它就执行后面大括号里的事
-      <br><b>3.</b> 点中时：读出这个块的 data-s 编号 → 用编号找到中栏同款编号的解释块 → 给它加上 active 高亮样式 → scrollIntoView 滚动到它
-      <br>（文件后半还有一段几乎相同的代码，方向反过来：点解释找代码。）
-      <div class="tip">⭐ 常见疑惑：=＞ 是什么？——"箭头函数"，就是"点中后要执行的动作"的简写。先理解作用，写法细节以后再抠。</div></div>
-  </div>
-
-  <!-- 右栏：整体逻辑与运行结果 -->
-  <div class="pane right">
-    <h3>整体逻辑 · 结构 · 效果</h3>
-    <h4>📌 一句话概括</h4>
-    <p>这是一个"代码讲解页"：用浏览器把一份 Python 代码和它的解释三栏并排展示，点击任意一边可以定位对照另一边。</p>
-    <h4>🧱 网页的三层结构</h4>
-    <pre>HTML（骨架）
- ├─ head   设置区：编码、标题
- └─ body   内容区
-     ├─ header  顶部标题栏
-     └─ main    三栏（左/中/右）
-CSS（皮肤）  → 决定三栏宽度、配色、高亮样式
-JS（肌肉）   → 实现"点击互找"的联动</pre>
-    <h4>🖱️ 交互怎么发生</h4>
-    <pre>你点击左侧代码块
- → JS 读出它的 data-s 编号
- → 按编号找到中栏对应解释
- → 两边同时加高亮
- → 解释块滚动到视野中间</pre>
-    <h4>🖥️ 浏览器里看到的效果</h4>
-    <pre class="output">顶部：深色标题栏
-左栏：黑底彩色代码（6 段）
-中栏：白底解释（6 块）
-右栏：米色逻辑总结
-点任意代码块 → 对应解释
-蓝框高亮并自动滚动到位</pre>
-    <h4>⚠️ 常见问题</h4>
-    <ul>
-      <li>中文乱码 → 文件须以 UTF-8 保存（本文件已是）</li>
-      <li>点击无反应 → 浏览器禁用了 JavaScript</li>
-      <li>布局挤变形 → 窗口太窄，三栏按百分比分配宽度</li>
-    </ul>
-  </div>
-</main>
-<script>
-  document.querySelectorAll('.codeblock').forEach(c => {
-    c.onclick = () => {
-      document.querySelectorAll('.codeblock,.exp').forEach(x => x.classList.remove('active'));
-      c.classList.add('active');
-      const e = document.querySelector('.exp[data-s="' + c.dataset.s + '"]');
-      e.classList.add('active');
-      e.scrollIntoView({behavior: 'smooth', block: 'center'});
-    };
-  });
-  document.querySelectorAll('.exp').forEach(e => {
-    e.onclick = () => {
-      document.querySelectorAll('.codeblock,.exp').forEach(x => x.classList.remove('active'));
-      e.classList.add('active');
-      const c = document.querySelector('.codeblock[data-s="' + e.dataset.s + '"]');
-      c.classList.add('active');
-      c.scrollIntoView({behavior: 'smooth', block: 'center'});
-    };
-  });
+<header><h1>三栏视图原型.html · 三栏对照讲解</h1><span>点左栏任意一段 → 中栏显示该段详细讲解 · py-reader v3.0</span></header>
+<main><section class="col" id="col-code"><h2 class="col-title">源代码(点击切换)</h2><div class="code-block" data-block="1"><pre><span class="ln">1</span>&lt;!DOCTYPE html<span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">2</span><span class=<span class="st">"kw"</span>>&lt;html</span><span class=<span class="st">"kw"</span>> lang=</span><span class="st">&quot;zh-CN&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span></pre></div><div class="code-block" data-block="2"><pre><span class="ln">3</span><span class=<span class="st">"kw"</span>>&lt;head</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">4</span><span class=<span class="st">"kw"</span>>&lt;meta</span><span class=<span class="st">"kw"</span>> charset=</span><span class="st">&quot;UTF-8&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">5</span><span class=<span class="st">"kw"</span>>&lt;title</span><span class=<span class="st">"kw"</span>>&gt;</span>词频统计.py —— 三栏讲解视图（产品原型演示）<span class=<span class="st">"kw"</span>>&lt;/title</span><span class=<span class="st">"kw"</span>>&gt;</span></pre></div><div class="code-block" data-block="3"><pre><span class="ln">6</span><span class=<span class="st">"kw"</span>>&lt;style</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">7</span>  * { margin: 0; padding: 0; box-sizing: border-box; }
+<span class="ln">8</span>  body { font-family: <span class="st">&quot;Microsoft YaHei&quot;</span>, sans-serif; height: 100vh; display: flex; flex-direction: column; background: #f0f2f5; }
+<span class="ln">9</span>  header { background: #2c3e50; color: #fff; padding: 8px 16px; font-size: 14px; }
+<span class="ln">10</span>  main { flex: 1; display: flex; overflow: hidden; }
+<span class="ln">11</span>  .pane { overflow-y: auto; padding: 12px; }
+<span class="ln">12</span>  .left { width: 38%; background: #1e1e1e; color: #d4d4d4; }
+<span class="ln">13</span>  .middle { width: 34%; background: #fff; border-left: 1px solid #ddd; }
+<span class="ln">14</span>  .right { width: 28%; background: #fdf6e3; border-left: 1px solid #ddd; }
+<span class="ln">15</span>  h3 { font-size: 13px; color: #888; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+<span class="ln">16</span>  .left h3 { color: #6a9955; }
+<span class="ln">17</span>  pre { font-family: Consolas, monospace; font-size: 13px; line-height: 1.6; white-space: pre-wrap; }</pre></div><div class="code-block" data-block="4"><pre><span class="ln">18</span>  .codeblock { border-radius: 6px; padding: 8px; margin-bottom: 6px; cursor: pointer; border: 1px solid transparent; }
+<span class="ln">19</span>  .codeblock:hover, .codeblock.active { background: #2d2d30; border-color: #007acc; }
+<span class="ln">20</span>  .kw { color: #569cd6; } .str { color: #ce9178; } .fn { color: #dcdcaa; } .cm { color: #6a9955; }
+<span class="ln">21</span>  .exp { border-radius: 6px; padding: 10px; margin-bottom: 6px; font-size: 13px; line-height: 1.7; border: 1px solid transparent; }
+<span class="ln">22</span>  .exp.active { background: #e8f4fd; border-color: #007acc; }
+<span class="ln">23</span>  .exp b.t { color: #007acc; display: block; margin-bottom: 4px; }
+<span class="ln">24</span>  .exp .tip { background: #fff8e1; border-left: 3px solid #ffc107; padding: 6px 8px; margin-top: 6px; font-size: 12px; border-radius: 0 4px 4px 0; }
+<span class="ln">25</span>  .right h4 { font-size: 13px; margin: 12px 0 6px; color: #b58900; }
+<span class="ln">26</span>  .right pre { background: #fff; border: 1px solid #e0d8b8; border-radius: 6px; padding: 8px; font-size: 12px; color: #333; }
+<span class="ln">27</span>  .right p, .right li { font-size: 13px; line-height: 1.7; }
+<span class="ln">28</span>  .right ul { padding-left: 18px; }
+<span class="ln">29</span>  .output { background: #1e1e1e !important; color: #4ec9b0 !important; border: none !important; }
+<span class="ln">30</span><span class=<span class="st">"kw"</span>>&lt;/style</span><span class=<span class="st">"kw"</span>>&gt;</span></pre></div><div class="code-block" data-block="5"><pre><span class="ln">32</span><span class=<span class="st">"kw"</span>>&lt;body</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">33</span><span class=<span class="st">"kw"</span>>&lt;header</span><span class=<span class="st">"kw"</span>>&gt;</span>📄 示例代码_词频统计.py —— 打开即讲解 · 三栏视图原型<span class=<span class="st">"kw"</span>>&lt;/header</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">34</span><span class=<span class="st">"kw"</span>>&lt;main</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">35</span>  <span<span class=<span class="st">"kw"</span>> class=</span><span class="st">"cm"</span>>&lt;!-- 左栏：源代码 --<span class=<span class="st">"kw"</span>>&gt;</span><<span class=<span class="st">"kw"</span>>/</span>span>
+<span class="ln">36</span>  <span class=<span class="st">"kw"</span>>&lt;div</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;pane left&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">37</span>    <span class=<span class="st">"kw"</span>>&lt;h3</span><span class=<span class="st">"kw"</span>>&gt;</span>源代码<span class=<span class="st">"kw"</span>>&lt;/h3</span><span class=<span class="st">"kw"</span>>&gt;</span></pre></div><div class="code-block" data-block="6"><pre><span class="ln">38</span>    <span class=<span class="st">"kw"</span>>&lt;div</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;codeblock&quot;</span><span class=<span class="st">"kw"</span>> data-s=</span><span class="st">&quot;1&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;pre</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;cm&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span><span class="st">&quot;&quot;</span><span class="st">&quot;词频统计小工具&quot;</span><span class="st">&quot;&quot;</span><span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">39</span><span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;kw&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>import<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span> re
+<span class="ln">40</span><span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;kw&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>from<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span> collections <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;kw&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>import<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span> Counter<span class=<span class="st">"kw"</span>>&lt;/pre</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;/div</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">41</span>    <span class=<span class="st">"kw"</span>>&lt;div</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;codeblock&quot;</span><span class=<span class="st">"kw"</span>> data-s=</span><span class="st">&quot;2&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;pre</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;kw&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>def<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span> <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;fn&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>read_file<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>(file_path):
+<span class="ln">42</span>    <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;kw&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>with<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span> <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;fn&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>open<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>(file_path, <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;str&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span><span class="st">&quot;r&quot;</span><span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>,<span class=<span class="st">"kw"</span>> encoding=</span><span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;str&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span><span class="st">&quot;utf-8&quot;</span><span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>) <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;kw&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>as<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span> f:
+<span class="ln">43</span>        text = f.read()
+<span class="ln">44</span>    <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;kw&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>return<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span> text<span class=<span class="st">"kw"</span>>&lt;/pre</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;/div</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">45</span>    <span class=<span class="st">"kw"</span>>&lt;div</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;codeblock&quot;</span><span class=<span class="st">"kw"</span>> data-s=</span><span class="st">&quot;3&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;pre</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;kw&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>def<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span> <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;fn&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>split_words<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>(text):
+<span class="ln">46</span>    words = re.findall(<span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;str&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>r<span class="st">&quot;[a-zA-Z]+&quot;</span><span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>, text.lower())
+<span class="ln">47</span>    <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;kw&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>return<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span> words<span class=<span class="st">"kw"</span>>&lt;/pre</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;/div</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">48</span>    <span class=<span class="st">"kw"</span>>&lt;div</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;codeblock&quot;</span><span class=<span class="st">"kw"</span>> data-s=</span><span class="st">&quot;4&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;pre</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;kw&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>def<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span> <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;fn&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>count_words<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>(words):
+<span class="ln">49</span>    counter = <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;fn&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>Counter<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>(words)
+<span class="ln">50</span>    <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;kw&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>return<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span> counter<span class=<span class="st">"kw"</span>>&lt;/pre</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;/div</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">51</span>    <span class=<span class="st">"kw"</span>>&lt;div</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;codeblock&quot;</span><span class=<span class="st">"kw"</span>> data-s=</span><span class="st">&quot;5&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;pre</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;kw&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>def<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span> <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;fn&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>show_top<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>(counter, top_n=<span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;str&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>5<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>):
+<span class="ln">52</span>    <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;fn&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>print<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>(<span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;str&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span><span class="st">&quot;===== 单词出现次数排行 =====&quot;</span><span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>)
+<span class="ln">53</span>    <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;kw&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>for<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span> word, count <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;kw&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>in<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span> counter.most_common(top_n):
+<span class="ln">54</span>        <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;fn&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>print<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>(<span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;str&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>f<span class="st">&quot;{word:&amp;lt;15} {count} 次&quot;</span><span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>)<span class=<span class="st">"kw"</span>>&lt;/pre</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;/div</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">55</span>    <span class=<span class="st">"kw"</span>>&lt;div</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;codeblock&quot;</span><span class=<span class="st">"kw"</span>> data-s=</span><span class="st">&quot;6&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;pre</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;kw&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>def<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span> <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;fn&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>main<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>():
+<span class="ln">56</span>    file_path = <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;str&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span><span class="st">&quot;article.txt&quot;</span><span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">57</span>    text = <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;fn&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>read_file<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>(file_path)
+<span class="ln">58</span>    words = <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;fn&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>split_words<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>(text)
+<span class="ln">59</span>    counter = <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;fn&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>count_words<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>(words)
+<span class="ln">60</span>    <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;fn&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>show_top<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>(counter)
+<span class="ln">61</span>
+<span class="ln">62</span><span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;kw&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>if<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span> __name__ == <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;str&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span><span class="st">&quot;__main__&quot;</span><span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>:
+<span class="ln">63</span>    <span class=<span class="st">"kw"</span>>&lt;span</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;fn&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>main<span class=<span class="st">"kw"</span>>&lt;/span</span><span class=<span class="st">"kw"</span>>&gt;</span>()<span class=<span class="st">"kw"</span>>&lt;/pre</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;/div</span><span class=<span class="st">"kw"</span>>&gt;</span></pre></div><div class="code-block" data-block="7"><pre><span class="ln">66</span>  <span<span class=<span class="st">"kw"</span>> class=</span><span class="st">"cm"</span>>&lt;!-- 中栏：逐段解释 --<span class=<span class="st">"kw"</span>>&gt;</span><<span class=<span class="st">"kw"</span>>/</span>span>
+<span class="ln">67</span>  <span class=<span class="st">"kw"</span>>&lt;div</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;pane middle&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">68</span>    <span class=<span class="st">"kw"</span>>&lt;h3</span><span class=<span class="st">"kw"</span>>&gt;</span>逐段解释（点击左侧代码可定位）<span class=<span class="st">"kw"</span>>&lt;/h3</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">69</span>    <span class=<span class="st">"kw"</span>>&lt;div</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;exp&quot;</span><span class=<span class="st">"kw"</span>> data-s=</span><span class="st">&quot;1&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;b</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;t&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>① 导入工具包<span class=<span class="st">"kw"</span>>&lt;/b</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">70</span>      做菜前先把调料拿到灶台上。<span class=<span class="st">"kw"</span>>&lt;b</span><span class=<span class="st">"kw"</span>>&gt;</span>import<span class=<span class="st">"kw"</span>>&lt;/b</span><span class=<span class="st">"kw"</span>>&gt;</span>（导入）就是<span class="st">&quot;借工具&quot;</span>：re 是正则表达式工具箱（按规则查找文字），Counter 是专门数<span class="st">&quot;每个东西出现几次&quot;</span>的计数器。<span class=<span class="st">"kw"</span>>&lt;/div</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">71</span>    <span class=<span class="st">"kw"</span>>&lt;div</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;exp&quot;</span><span class=<span class="st">"kw"</span>> data-s=</span><span class="st">&quot;2&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;b</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;t&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>② read_file：读文件<span class=<span class="st">"kw"</span>>&lt;/b</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">72</span>      <span class=<span class="st">"kw"</span>>&lt;b</span><span class=<span class="st">"kw"</span>>&gt;</span>函数<span class=<span class="st">"kw"</span>>&lt;/b</span><span class=<span class="st">"kw"</span>>&gt;</span>——把一段功能打包起个名字，像菜谱，写一次用无数次。with open 打开文件并自动关闭；<span class="st">&quot;r&quot;</span> 表示只读；utf-8 防止中文乱码；return 把读到的内容交还出去。<span class=<span class="st">"kw"</span>>&lt;/div</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">73</span>    <span class=<span class="st">"kw"</span>>&lt;div</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;exp&quot;</span><span class=<span class="st">"kw"</span>> data-s=</span><span class="st">&quot;3&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;b</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;t&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>③ split_words：切单词<span class=<span class="st">"kw"</span>>&lt;/b</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">74</span>      text.lower() 把字母全转小写（让 Python 和 python 算同一个词）；正则 [a-zA-Z]+ 表示<span class="st">&quot;连续英文字母&quot;</span>，把所有单词挑出来组成列表，标点数字自动忽略。<span class=<span class="st">"kw"</span>>&lt;/div</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">75</span>    <span class=<span class="st">"kw"</span>>&lt;div</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;exp&quot;</span><span class=<span class="st">"kw"</span>> data-s=</span><span class="st">&quot;4&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;b</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;t&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>④ count_words：数数<span class=<span class="st">"kw"</span>>&lt;/b</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">76</span>      把单词列表交给 Counter，自动数出每个词出现几次。结果像词典：单词 → 次数。一行顶别人十行，这就是 Python 的风格。<span class=<span class="st">"kw"</span>>&lt;/div</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">77</span>    <span class=<span class="st">"kw"</span>>&lt;div</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;exp&quot;</span><span class=<span class="st">"kw"</span>> data-s=</span><span class="st">&quot;5&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;b</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;t&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>⑤ show_top：打印排行榜<span class=<span class="st">"kw"</span>>&lt;/b</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">78</span>      top_n=5 是带默认值的参数（不传就显示前5名）；for 循环把排行榜逐项处理，像点名；f-string 把单词和次数填进字符串，&amp;lt;15 让输出对齐整齐。<span class=<span class="st">"kw"</span>>&lt;/div</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">79</span>    <span class=<span class="st">"kw"</span>>&lt;div</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;exp&quot;</span><span class=<span class="st">"kw"</span>> data-s=</span><span class="st">&quot;6&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;b</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;t&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>⑥ main：总指挥 + 程序入口<span class=<span class="st">"kw"</span>>&lt;/b</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">80</span>      把四个功能按顺序串起来：读文件→切单词→数数→打印。
+<span class="ln">81</span>      <span class=<span class="st">"kw"</span>>&lt;div</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;tip&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>⭐ 常见疑惑：if __name__ == <span class="st">&quot;__main__&quot;</span> 意思是<span class="st">&quot;只有直接运行本文件时才执行 main()&quot;</span>，被别的程序借用时不执行。先背下来，原理以后懂。<span class=<span class="st">"kw"</span>>&lt;/div</span><span class=<span class="st">"kw"</span>>&gt;</span><span class=<span class="st">"kw"</span>>&lt;/div</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">82</span>  <span class=<span class="st">"kw"</span>>&lt;/div</span><span class=<span class="st">"kw"</span>>&gt;</span></pre></div><div class="code-block" data-block="8"><pre><span class="ln">85</span>  <span class=<span class="st">"kw"</span>>&lt;div</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;pane right&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">86</span>    <span class=<span class="st">"kw"</span>>&lt;h3</span><span class=<span class="st">"kw"</span>>&gt;</span>整体逻辑 · 运行流程 · 结果<span class=<span class="st">"kw"</span>>&lt;/h3</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">87</span>    <span class=<span class="st">"kw"</span>>&lt;h4</span><span class=<span class="st">"kw"</span>>&gt;</span>📌 一句话概括<span class=<span class="st">"kw"</span>>&lt;/h4</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">88</span>    <span class=<span class="st">"kw"</span>>&lt;p</span><span class=<span class="st">"kw"</span>>&gt;</span>读一篇文章，统计每个英文单词出现几次，打印前 5 名。<span class=<span class="st">"kw"</span>>&lt;/p</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">89</span>    <span class=<span class="st">"kw"</span>>&lt;h4</span><span class=<span class="st">"kw"</span>>&gt;</span>🔗 谁调用谁<span class=<span class="st">"kw"</span>>&lt;/h4</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">90</span>    <span class=<span class="st">"kw"</span>>&lt;pre</span><span class=<span class="st">"kw"</span>>&gt;</span>main()
+<span class="ln">91</span> ├─ read_file()    读 article.txt
+<span class="ln">92</span> ├─ split_words()  切成单词列表
+<span class="ln">93</span> ├─ count_words()  统计次数
+<span class="ln">94</span> └─ show_top()     打印排行榜<span class=<span class="st">"kw"</span>>&lt;/pre</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">95</span>    <span class=<span class="st">"kw"</span>>&lt;h4</span><span class=<span class="st">"kw"</span>>&gt;</span>🌊 数据怎么流<span class=<span class="st">"kw"</span>>&lt;/h4</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">96</span>    <span class=<span class="st">"kw"</span>>&lt;pre</span><span class=<span class="st">"kw"</span>>&gt;</span>article.txt
+<span class="ln">97</span> → 整段文字
+<span class="ln">98</span> → 单词列表
+<span class="ln">99</span> → {单词: 次数}
+<span class="ln">100</span> → 屏幕排行榜<span class=<span class="st">"kw"</span>>&lt;/pre</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">101</span>    <span class=<span class="st">"kw"</span>>&lt;h4</span><span class=<span class="st">"kw"</span>>&gt;</span>🖥️ 实际运行结果<span class=<span class="st">"kw"</span>>&lt;/h4</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">102</span>    <span class=<span class="st">"kw"</span>>&lt;pre</span><span class=<span class="st">"kw"</span>> class=</span><span class="st">&quot;output&quot;</span><span class=<span class="st">"kw"</span>>&gt;</span>===== 单词出现次数排行 =====
+<span class="ln">103</span>python          5 次
+<span class="ln">104</span>is              3 次
+<span class="ln">105</span>learning        3 次
+<span class="ln">106</span>language        2 次
+<span class="ln">107</span>easy            2 次<span class=<span class="st">"kw"</span>>&lt;/pre</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">108</span>    <span class=<span class="st">"kw"</span>>&lt;h4</span><span class=<span class="st">"kw"</span>>&gt;</span>⚠️ 常见报错<span class=<span class="st">"kw"</span>>&lt;/h4</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">109</span>    <span class=<span class="st">"kw"</span>>&lt;ul</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">110</span>      <span class=<span class="st">"kw"</span>>&lt;li</span><span class=<span class="st">"kw"</span>>&gt;</span>FileNotFoundError：旁边没有 article.txt<span class=<span class="st">"kw"</span>>&lt;/li</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">111</span>      <span class=<span class="st">"kw"</span>>&lt;li</span><span class=<span class="st">"kw"</span>>&gt;</span>中文统计不出：[a-zA-Z]+ 只认英文<span class=<span class="st">"kw"</span>>&lt;/li</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">112</span>    <span class=<span class="st">"kw"</span>>&lt;/ul</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">113</span>  <span class=<span class="st">"kw"</span>>&lt;/div</span><span class=<span class="st">"kw"</span>>&gt;</span></pre></div><div class="code-block" data-block="9"><pre><span class="ln">115</span><span class=<span class="st">"kw"</span>>&lt;script</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">116</span>  <span class=<span class="st">"kw"</span>>/</span><span class=<span class="st">"kw"</span>>/</span> 左右联动：点击代码块，高亮对应解释；点击解释，定位对应代码
+<span class="ln">117</span>  document.querySelectorAll(&#x27;.codeblock&#x27;).forEach(c =<span class=<span class="st">"kw"</span>>&gt;</span> {
+<span class="ln">118</span>    c.onclick = () =<span class=<span class="st">"kw"</span>>&gt;</span> {
+<span class="ln">119</span>      document.querySelectorAll(&#x27;.codeblock,.exp&#x27;).forEach(x =<span class=<span class="st">"kw"</span>>&gt;</span> x.classList.remove(&#x27;active&#x27;));
+<span class="ln">120</span>      c.classList.add(&#x27;active&#x27;);
+<span class="ln">121</span>      const e = document.querySelector(&#x27;.exp[data-s=<span class="st">&quot;&#x27; + c.dataset.s + &#x27;&quot;</span>]&#x27;);
+<span class="ln">122</span>      e.classList.add(&#x27;active&#x27;);
+<span class="ln">123</span>      e.scrollIntoView({behavior: &#x27;smooth&#x27;, block: &#x27;center&#x27;});
+<span class="ln">124</span>    };
+<span class="ln">125</span>  });
+<span class="ln">126</span>  document.querySelectorAll(&#x27;.exp&#x27;).forEach(e =<span class=<span class="st">"kw"</span>>&gt;</span> {
+<span class="ln">127</span>    e.onclick = () =<span class=<span class="st">"kw"</span>>&gt;</span> {
+<span class="ln">128</span>      document.querySelectorAll(&#x27;.codeblock,.exp&#x27;).forEach(x =<span class=<span class="st">"kw"</span>>&gt;</span> x.classList.remove(&#x27;active&#x27;));
+<span class="ln">129</span>      e.classList.add(&#x27;active&#x27;);
+<span class="ln">130</span>      const c = document.querySelector(&#x27;.codeblock[data-s=<span class="st">&quot;&#x27; + e.dataset.s + &#x27;&quot;</span>]&#x27;);
+<span class="ln">131</span>      c.classList.add(&#x27;active&#x27;);
+<span class="ln">132</span>      c.scrollIntoView({behavior: &#x27;smooth&#x27;, block: &#x27;center&#x27;});
+<span class="ln">133</span>    };
+<span class="ln">134</span>  });
+<span class="ln">135</span><span class=<span class="st">"kw"</span>>&lt;/script</span><span class=<span class="st">"kw"</span>>&gt;</span></pre></div><div class="code-block" data-block="10"><pre><span class="ln">136</span><span class=<span class="st">"kw"</span>>&lt;/body</span><span class=<span class="st">"kw"</span>>&gt;</span>
+<span class="ln">137</span><span class=<span class="st">"kw"</span>>&lt;/html</span><span class=<span class="st">"kw"</span>>&gt;</span></pre></div></section><section class="col" id="colExp"><div class="mid-head"><span class="badge" id="midBadge"></span><span class="mtitle" id="midTitle"></span><button class="nav-btn" id="btnPrev">← 上一段</button><button class="nav-btn" id="btnNext">下一段 →</button></div><div class="detail" data-block="1"><p>第 1 行告诉浏览器'这是一个现代网页';第 2 行是整棵'大树'的根——页面上所有东西都是它的子孙。</p><h4>📋 逐行拆解</h4><ul><li>第 1 行 <code>&lt;!DOCTYPE html&gt;</code> —— 文档类型声明:告诉浏览器"请按 HTML5 现代标准解读这个文件"。</li><li>第 2 行 <code>&lt;html lang="zh-CN"&gt;</code> —— 整个网页的根标签;lang="zh-CN" 表示页面语言是中文(有助于浏览器和搜索引擎正确处理)。</li></ul><h4>📖 术语与语法(第一次出现,只讲一次)</h4><div class="term"><div class="tname">◆ 标签(成对盒子)</div><div class="trow"><b>语法:</b><code>&lt;标签名&gt;内容&lt;/标签名&gt;</code></div><div class="trow"><b>是什么:</b>HTML 的基本单位:一个盒子。开头标签告诉浏览器'盒子里是什么',结尾标签(带斜杠)表示盒子结束。</div><div class="trow"><b>类比:</b>快递盒:面单写内容,盒子装东西,封箱表示结束。</div><div class="trow"><b>本文件中:</b>本文件所有内容都装在标签盒子里,如 html、head、body、div。</div></div><div class="term"><div class="tname">◆ 属性</div><div class="trow"><b>语法:</b><code>&lt;标签名 属性名="值"&gt;</code></div><div class="trow"><b>是什么:</b>写在开始标签里、给标签补充信息的'小纸条',一个标签可以带多张。</div><div class="trow"><b>类比:</b>快递单上的备注栏:易碎、加急、收件人……</div><div class="trow"><b>本文件中:</b>lang="zh-CN" 就是 html 标签的一张小纸条。</div></div><div class="term"><div class="tname">◆ DOCTYPE 声明</div><div class="trow"><b>语法:</b><code>&lt;!DOCTYPE html&gt;</code>(固定写法,记住即可)</div><div class="trow"><b>是什么:</b>网页的第一行声明,不是标签也不是内容,只是告诉浏览器用哪套规则解读后面的代码。</div><div class="trow"><b>类比:</b>进门前先报'我们说普通话'——后面聊天才不跑偏。</div><div class="trow"><b>本文件中:</b>HTML5 的标准声明就是这一行,写错或漏写可能触发浏览器的'兼容模式',样式表现异常。</div></div><h4>⭐ 常见疑惑</h4><div class="faq"><p>Q:DOCTYPE 为什么有个感叹号?——它是给浏览器看的特殊声明,不是成对标签,所以格式与众不同,照抄即可。</p></div></div><div class="detail" data-block="2"><p>head 区是网页的'幕后档案':这里的内容不直接显示在页面上,而是设置网页的名字、编码等元信息。</p><h4>📋 逐行拆解</h4><ul><li>第 3 行 <code>&lt;head&gt;</code> —— head 区开始(幕后档案区)。</li><li>第 4 行 <code>&lt;meta charset="UTF-8"&gt;</code> —— 设置字符编码为 UTF-8,保证中文不乱码。</li><li>第 5 行 <code>&lt;title&gt;...&lt;/title&gt;</code> —— 网页标题:显示在浏览器标签页上。</li></ul><h4>📖 术语与语法(第一次出现,只讲一次)</h4><div class="term"><div class="tname">◆ head 区</div><div class="trow"><b>语法:</b><code>&lt;head&gt;...&lt;/head&gt;</code></div><div class="trow"><b>是什么:</b>网页的'幕后档案区':编码、标题、样式表等都登记在这里;用户看不见它,浏览器开工前必读。</div><div class="trow"><b>类比:</b>演出前的后台:灯光、道具、节目单都在这里准备,观众只看到前台。</div><div class="trow"><b>本文件中:</b>本文件的 head 里装了 meta 和 title,以及下面第 6~30 行的整段样式。</div></div><div class="term"><div class="tname">◆ meta charset(字符编码)</div><div class="trow"><b>语法:</b><code>&lt;meta charset="UTF-8"&gt;</code></div><div class="trow"><b>是什么:</b>声明这个网页的文字用 UTF-8 编码保存;不声明,中文可能显示成一堆乱码方块。</div><div class="trow"><b>类比:</b>约定'咱们用普通话通话',双方编码一致才不会鸡同鸭讲。</div><div class="trow"><b>本文件中:</b>charset 是 character set(字符集)的缩写。</div></div><div class="term"><div class="tname">◆ title(网页标题)</div><div class="trow"><b>语法:</b><code>&lt;title&gt;文字&lt;/title&gt;</code></div><div class="trow"><b>是什么:</b>网页的名字,显示在浏览器标签页卡上,也是收藏时的默认名字。</div><div class="trow"><b>类比:</b>书本封面上的书名。</div><div class="trow"><b>本文件中:</b>本页标题是「词频统计.py —— 三栏讲解视图(产品原型演示)」。</div></div><h4>⭐ 常见疑惑</h4><div class="faq"><p>Q:为什么 head 里的东西页面上看不见?——它就是'幕后'设计:可见内容都在 body 区(第 32 行开始),head 只管设置和准备。</p></div></div><div class="detail" data-block="3"><p>style 区是网页的'装修图纸':用 CSS 语言规定每个区域长什么样——颜色、宽高、字号、排列方式。这一段先定全局和三栏的骨架样式。</p><h4>📋 逐行拆解</h4><ul><li>第 6 行 <code>&lt;style&gt;</code> —— CSS 样式区开始。</li><li>第 7 行 <code>* { margin:0; padding:0; box-sizing:border-box; }</code> —— 星号是'所有标签',先统一清零内外边距,并让宽高计算方式一致。</li><li>第 8 行 <code>body {...}</code> —— 整个页面的样式:中文字体、占满全屏高度、纵向 flex 排列、浅灰背景。</li><li>第 9 行 <code>header {...}</code> —— 顶部标题栏:深蓝底、白字、内边距。</li><li>第 10 行 <code>main {...}</code> —— 主内容区:占满剩余高度、横向 flex 排列、超出隐藏——这是'三栏并排'的关键。</li><li>第 11 行 <code>.pane {...}</code> —— 三个栏的公共样式:可滚动、内边距。</li><li>第 12~14 行 <code>.left / .middle / .right</code> —— 三栏各自的宽度(38%/34%/28%)和背景色;左栏深色(像代码编辑器),中栏白色,右栏米色。</li><li>第 15 行 <code>h3 {...}</code> —— 栏目标题样式:小字、灰色、大写字母间距。</li><li>第 16 行 <code>.left h3 {...}</code> —— 左栏里的 h3 单独改成绿色。</li><li>第 17 行 <code>pre {...}</code> —— 等宽字体样式:代码要对齐,所以用等宽字体。</li></ul><h4>📖 术语与语法(第一次出现,只讲一次)</h4><div class="term"><div class="tname">◆ style 区与 CSS</div><div class="trow"><b>语法:</b><code>&lt;style&gt; CSS 规则 &lt;/style&gt;</code>;规则格式:<code>选择器 { 属性: 值; }</code></div><div class="trow"><b>是什么:</b>CSS = 层叠样式表,网页的'化妆师';style 标签把化妆师请进网页。每条规则 = 选中谁 + 化什么妆。</div><div class="trow"><b>类比:</b>装修图纸:哪个房间(选择器)、刷什么漆(颜色)、多高多宽(尺寸)。</div><div class="trow"><b>本文件中:</b>第 7~29 行全是 CSS 规则,一共二十多条。</div></div><div class="term"><div class="tname">◆ 选择器与类选择器(.点开头)</div><div class="trow"><b>语法:</b>标签选择器:<code>body</code>;类选择器:<code>.pane</code>;后代选择器:<code>.left h3</code></div><div class="trow"><b>是什么:</b>选择器 = 规则作用于谁。点开头的是'类名'——标签上写 class="xxx" 归到这个类,类规则就适用于它。</div><div class="trow"><b>类比:</b>班级点名:body 是'全体宿舍',.pane 是'所有叫 pane 的同学',.left h3 是'左班的同学里的 h3'。</div><div class="trow"><b>本文件中:</b>第 11 行 .pane 对应下面 class="pane left" 的 div;第 16 行 .left h3 只影响左栏的标题。</div></div><div class="term"><div class="tname">◆ flex 布局(弹性排列)</div><div class="trow"><b>语法:</b><code>display: flex; flex-direction: row/column;</code></div><div class="trow"><b>是什么:</b>CSS 的排列方式之一:让子元素像弹簧一样按方向排队,自动分配空间。row=横排,column=竖排。</div><div class="trow"><b>类比:</b>食堂窗口排队:纵队(column)或横队(row),大家自动站好。</div><div class="trow"><b>本文件中:</b>第 8 行 body 纵向排(页头在上、main 在下);第 10 行 main 横向排(三栏并排)——这是本页面最核心的布局手法。</div></div><div class="term"><div class="tname">◆ 尺寸单位(px / % / vh)</div><div class="trow"><b>语法:</b><code>width: 38%; height: 100vh; padding: 12px;</code></div><div class="trow"><b>是什么:</b>px=像素(固定大小);%=占父容器的百分比;vh=视口高度的百分之几(100vh=正好一屏高)。</div><div class="trow"><b>类比:</b>px 是'固定工资',% 是'按比例分家产',vh 是'占屏幕身高的几成'。</div><div class="trow"><b>本文件中:</b>三栏宽度用 %(跟着窗口大小缩放),body 高度用 100vh(永远正好一屏)。</div></div><div class="term"><div class="tname">◆ 颜色 #十六进制</div><div class="trow"><b>语法:</b><code>color: #fff; background: #1e1e1e;</code></div><div class="trow"><b>是什么:</b># 开头六位十六进制数表示颜色,每两位一组:红绿蓝。#fff 是白色缩写,#1e1e1e 是深灰。</div><div class="trow"><b>类比:</b>调色盘上的编号,报编号就能调出同样的颜色。</div><div class="trow"><b>本文件中:</b>左栏 #1e1e1e 模仿了 VS Code 编辑器的经典深色。</div></div><h4>⭐ 常见疑惑</h4><div class="faq"><p>Q:第 7 行为什么对星号 * 清零?——浏览器给每个标签自带默认边距,不清零的话各家浏览器排出来不一样;清零后从同一起跑线开始装修。</p></div></div><div class="detail" data-block="4"><p>style 的后半段:给左栏代码块、中栏解释块、右栏各个零件精修的'妆容',包括鼠标悬停和选中的高亮效果。</p><h4>📋 逐行拆解</h4><ul><li>第 18~20 行 <code>.codeblock</code> —— 代码块样式:圆角、内边距、手型光标(暗示可点);悬停或选中时变浅蓝边框。第 20 行还定义了语法着色四色:关键字蓝、字符串橙、函数黄、注释绿。</li><li>第 21~24 行 <code>.exp</code> —— 解释块样式:圆角卡片;选中时浅蓝底;小标题蓝色;.tip 是黄色提示条(⭐常见疑惑)。</li><li>第 25~28 行 —— 右栏零件:h4 小标题、白底圆角 pre 框、正文行高。</li><li>第 29 行 <code>.output</code> —— 运行结果框:黑底青字,模仿终端窗口;!important 表示'这条优先级最高,别的规则别盖我'。</li></ul><h4>📖 术语与语法(第一次出现,只讲一次)</h4><div class="term"><div class="tname">◆ 伪类(:hover / .active)</div><div class="trow"><b>语法:</b><code>.codeblock:hover { ... }</code></div><div class="trow"><b>是什么:</b>hover = 鼠标悬停时的样式;类 active 一般配合 JS,表示'当前选中'的那块。</div><div class="trow"><b>类比:</b>感应灯:人走近(hover)就亮;active 是'舞台上被追光照着的那位'。</div><div class="trow"><b>本文件中:</b>第 19 行悬停/选中同一个样式,所以用逗号合并成一条。</div></div><div class="term"><div class="tname">◆ !important(最高优先级)</div><div class="trow"><b>语法:</b><code>color: #4ec9b0 !important;</code></div><div class="trow"><b>是什么:</b>给一条 CSS 规则加'尚方宝剑',优先级最高,其他冲突规则一律让路。</div><div class="trow"><b>类比:</b>领导批条'此件加急'——插队也得办。</div><div class="trow"><b>本文件中:</b>第 29 行右栏 pre 的字颜色必须压过前面第 17 行的通用 pre 规则,所以用 !important。</div></div><div class="term"><div class="tname">◆ 分组与后代选择器</div><div class="trow"><b>语法:</b><code>.kw { ... } .str { ... }</code>(空格分隔多条);<code>.exp .tip { ... }</code>(空格 = 后代)</div><div class="trow"><b>是什么:</b>一条规则里写多个选择器,用逗号分组共享样式;两个选择器用空格连,表示'前者里面的后者'。</div><div class="trow"><b>类比:</b>分组:'张三、李四,都穿校服';后代:'三年级(里面的)班长'。</div><div class="trow"><b>本文件中:</b>第 20 行一条规则定义了四个着色类;第 24 行 .exp .tip 只作用于解释块内部的提示条。</div></div><h4>⭐ 常见疑惑</h4><div class="faq"><p>Q:为什么有的规则一条顶四条?——把相同的选择器用逗号合并,是 CSS 的'合并同类项',图纸更短更好维护。</p></div></div><div class="detail" data-block="5"><p>body 是网页的'前台舞台':用户能看到的一切都在这里。这一段是舞台开幕——页头、三栏容器、左栏就位。</p><h4>📋 逐行拆解</h4><ul><li>第 32 行 <code>&lt;body&gt;</code> —— 可见内容区开始。</li><li>第 33 行 <code>&lt;header&gt;</code> —— 顶部标题栏:📄 示例代码_词频统计.py —— 打开即讲解 · 三栏视图原型。</li><li>第 34 行 <code>&lt;main&gt;</code> —— 主容器:三栏共同的'大盒子',CSS 里它被设为横向 flex,所以里面的三栏会并排。</li><li>第 35 行 HTML 注释 —— <code>&lt;!-- 左栏:源代码 --&gt;</code>:给人看的便签,浏览器忽略。</li><li>第 36 行 <code>&lt;div class="pane left"&gt;</code> —— 左栏盒子:同时属于 pane 和 left 两个类,样式叠加。</li><li>第 37 行 <code>&lt;h3&gt;源代码&lt;/h3&gt;</code> —— 栏目标题。</li></ul><h4>📖 术语与语法(第一次出现,只讲一次)</h4><div class="term"><div class="tname">◆ body 区</div><div class="trow"><b>语法:</b><code>&lt;body&gt;...&lt;/body&gt;</code></div><div class="trow"><b>是什么:</b>网页的'前台舞台':所有看得见的内容都放这里,与看不见的 head 相对。</div><div class="trow"><b>类比:</b>剧场的舞台 vs 后台。</div><div class="trow"><b>本文件中:</b>本文件的 body 从第 32 行一直到第 136 行。</div></div><div class="term"><div class="tname">◆ div(通用盒子)</div><div class="trow"><b>语法:</b><code>&lt;div class="名字"&gt;...&lt;/div&gt;</code></div><div class="trow"><b>是什么:</b>最通用的容器标签,本身没有特定含义,纯粹用来'圈一块地',再靠 class 给它上妆。</div><div class="trow"><b>类比:</b>没有印刷字样的空白收纳箱——贴什么标签就是什么箱。</div><div class="trow"><b>本文件中:</b>本页的 main、三栏、代码块、解释块全是 div。</div></div><div class="term"><div class="tname">◆ class 属性的叠加写法</div><div class="trow"><b>语法:</b><code>class="pane left"</code>(空格分隔多个类)</div><div class="trow"><b>是什么:</b>一个标签可以同时加入多个班级,每个班级的规则都适用。</div><div class="trow"><b>类比:</b>一个人既是'三班'又是'合唱团',两套规矩都要遵守。</div><div class="trow"><b>本文件中:</b>第 36 行同时拿到 .pane 的公共样式和 .left 的深色样式。</div></div><div class="term"><div class="tname">◆ HTML 注释</div><div class="trow"><b>语法:</b><code>&lt;!-- 注释 --&gt;</code></div><div class="trow"><b>是什么:</b>HTML 里的便签,写给看代码的人,浏览器不显示。</div><div class="trow"><b>类比:</b>排练时的手卡,观众看不见。</div><div class="trow"><b>本文件中:</b>第 35、66、84 行用注释标出了三栏的分界。</div></div><div class="term"><div class="tname">◆ 语义化标签(header/main)</div><div class="trow"><b>语法:</b><code>&lt;header&gt;</code>、<code>&lt;main&gt;</code></div><div class="trow"><b>是什么:</b>HTML5 新增的'有含义的盒子':header=页头,main=主要内容。浏览器和搜索引擎看得懂结构。</div><div class="trow"><b>类比:</b>文件柜上直接印好的标签,不用再贴便签。</div><div class="trow"><b>本文件中:</b>虽然看起来和 div 一样,但用它们结构更清晰——这就是专业写法。</div></div><h4>⭐ 常见疑惑</h4><div class="faq"><p>Q:div 和 header/main 都能当盒子,用哪个?——有合适语义的优先用语义化标签,剩下的通用场景用 div。</p></div></div><div class="detail" data-block="6"><p>左栏的内容:六个代码块,每个块里装着词频统计程序的一段源代码,并手工上了语法颜色(关键字蓝、字符串橙、注释绿)。</p><h4>📋 逐行拆解</h4><ul><li>第 38~40 行 块①:程序的文档字符串 + import 导入区(re 正则工具、Counter 计数器)。</li><li>第 41~44 行 块②:read_file 函数——读文件(with open、return)。</li><li>第 45~47 行 块③:split_words 函数——用正则切出单词。</li><li>第 48~50 行 块④:count_words 函数——Counter 统计次数。</li><li>第 51~54 行 块⑤:show_top 函数——for 循环打印排行榜(f-string)。</li><li>第 55~63 行 块⑥:main 函数把四步串起来 + if __name__ 入口。</li><li>注意:每个 div 都带 <code>data-s="编号"</code>,这是给 JS 联动用的'座位号'(第 9 段细讲)。</li></ul><h4>📖 术语与语法(第一次出现,只讲一次)</h4><div class="term"><div class="tname">◆ pre(预格式化文本)</div><div class="trow"><b>语法:</b><code>&lt;pre&gt;...&lt;/pre&gt;</code></div><div class="trow"><b>是什么:</b>保留文字里原有的空格和换行——代码缩进不能丢,所以代码都用 pre 装。</div><div class="trow"><b>类比:</b>方格稿纸:字写哪就停哪,不会自动重排。</div><div class="trow"><b>本文件中:</b>第 17 行 CSS 还给 pre 配了等宽字体 Consolas,代码列得整整齐齐。</div></div><div class="term"><div class="tname">◆ span(行内小盒子)</div><div class="trow"><b>语法:</b><code>&lt;span class="kw"&gt;import&lt;/span&gt;</code></div><div class="trow"><b>是什么:</b>不换行的小盒子,专门用来给一小段文字单独上色或加样式。</div><div class="trow"><b>类比:</b>荧光笔——只涂几个词,不影响整段排版。</div><div class="trow"><b>本文件中:</b>第 39 行的 import 被 span 涂成蓝色,就是第 20 行 .kw 规则的效果。</div></div><div class="term"><div class="tname">◆ data-* 自定义属性</div><div class="trow"><b>语法:</b><code>data-s="1"</code></div><div class="trow"><b>是什么:</b>HTML5 允许自定义'以 data- 开头的属性',用来在标签上存数据,JS 可以随时读。</div><div class="trow"><b>类比:</b>给合唱队员背后贴的号码牌——观众看不见,指挥按号码点名。</div><div class="trow"><b>本文件中:</b>第 9 段的 JS 就靠 data-s 找到'点击的块'对应的解释块。</div></div><div class="term"><div class="tname">◆ HTML 实体(&lt; &gt; &amp;quot;)</div><div class="trow"><b>语法:</b><code>&amp;lt;</code> 显示为 &lt;,<code>&amp;gt;</code> 显示为 &gt;,<code>&amp;quot;</code> 显示为引号</div><div class="trow"><b>是什么:</b>要在网页上显示 <、>、引号这些'HTML 专用字符'本身时,必须写成实体,否则浏览器会当成标签解析。</div><div class="trow"><b>类比:</b>想谈论'信封'本身时,得说'信封这个物品',不能直接塞一个信封进去。</div><div class="trow"><b>本文件中:</b>第 54 行 f-string 里的尖括号就是写成 &lt;15 才能在页面上显示出来。</div></div><h4>⭐ 常见疑惑</h4><div class="faq"><p>Q:代码里的颜色是网页自动识别的吗?——不是。这个原型页的着色是手工用 span 涂的;真正的 skill 生成页时会自动识别关键字、字符串、注释并上色。</p></div></div><div class="detail" data-block="7"><p>中栏的内容:与左栏六个代码块一一对应的六段大白话解释,每段都带蓝色小标题,第六段还附了黄色'⭐常见疑惑'提示条。</p><h4>📋 逐行拆解</h4><ul><li>第 67 行 <code>&lt;div class="pane middle"&gt;</code> —— 中栏盒子开始。</li><li>第 68 行 栏目标题:逐段解释(点击左侧代码可定位)。</li><li>第 69~82 行 六个解释块,每个 div 的 class="exp",同样带 data-s 座位号与左栏一一对应。</li><li>第 69~70 行 块①:解释 import——'做菜前把调料拿到灶台上'。</li><li>第 71~72 行 块②:解释函数和 with open。</li><li>第 73~74 行 块③:解释 lower() 和正则切词。</li><li>第 75~76 行 块④:解释 Counter——'结果像词典'。</li><li>第 77~78 行 块⑤:解释默认参数、for 循环、f-string。</li><li>第 79~81 行 块⑥:串流程 + ⭐常见疑惑提示条(tip)。</li></ul><h4>📖 术语与语法(第一次出现,只讲一次)</h4><div class="term"><div class="tname">◆ b(加粗)</div><div class="trow"><b>语法:</b><code>&lt;b&gt;文字&lt;/b&gt;</code></div><div class="trow"><b>是什么:</b>把文字加粗显示,纯粹是外观标签,不带'重要'含义。</div><div class="trow"><b>类比:</b>马克笔描粗。</div><div class="trow"><b>本文件中:</b>每段解释里的术语都用 b 标粗,如 <b>import</b>(导入)。</div></div><div class="term"><div class="tname">◆ 嵌套结构(盒子套盒子)</div><div class="trow"><b>语法:</b><code>&lt;div&gt;&lt;b&gt;...&lt;/b&gt;&lt;/div&gt;</code></div><div class="trow"><b>是什么:</b>标签必须成对且正确嵌套:先开的后关,像套娃一样一层包一层。</div><div class="trow"><b>类比:</b>俄罗斯套娃/快递盒装快递盒——先装进去的最后取出来。</div><div class="trow"><b>本文件中:</b>第 81 行 tip 盒子里又套了文字,b 和 div 交错但顺序合法。</div></div><h4>⭐ 常见疑惑</h4><div class="faq"><p>Q:中栏为什么要和左栏一一对应?——这是三栏讲解的核心设计:左眼看代码、右眼看解释,疑惑产生在哪一行,目光平移就能找到答案,不用上下翻。</p></div></div><div class="detail" data-block="8"><p>右栏的内容:整体逻辑——一句话概括、调用关系树、数据流向、实际运行结果(模仿终端的黑框)、常见报错清单。</p><h4>📋 逐行拆解</h4><ul><li>第 85 行 右栏盒子开始;第 86 行 栏目标题:整体逻辑 · 运行流程 · 结果。</li><li>第 87~88 行 📌 一句话概括:读文章、统计词频、打印前五名。</li><li>第 89~94 行 🔗 谁调用谁:main 调用四个函数的树状图(pre 排版)。</li><li>第 95~100 行 🌊 数据怎么流:文件 → 文字 → 单词列表 → 词典 → 排行榜。</li><li>第 101~107 行 🖥️ 实际运行结果:黑底青字的终端风格输出框(class="output")。</li><li>第 108~112 行 ⚠️ 常见报错:两条 li 列表。</li></ul><h4>📖 术语与语法(第一次出现,只讲一次)</h4><div class="term"><div class="tname">◆ 列表标签 ul / li</div><div class="trow"><b>语法:</b><code>&lt;ul&gt;&lt;li&gt;条目&lt;/li&gt;&lt;/ul&gt;</code></div><div class="trow"><b>是什么:</b>ul = 无序列表(前面是圆点),li = 列表项。一个 ul 套若干 li。</div><div class="trow"><b>类比:</b>购物清单:一张清单纸 + 一行行条目。</div><div class="trow"><b>本文件中:</b>第 109~112 行就是两条报错清单。</div></div><div class="term"><div class="tname">◆ 类组合选择(.right pre)</div><div class="trow"><b>语法:</b><code>.right pre { ... }</code> 与 <code>pre class="output"</code></div><div class="trow"><b>是什么:</b>两个类名连写(无空格)表示'同时属于';而 .right pre(有空格)表示'右栏里的 pre'——空格的有无,意思完全不同。</div><div class="trow"><b>类比:</b>无空格='既是党员又是博士',有空格='党员里的博士'。</div><div class="trow"><b>本文件中:</b>第 26 行 .right pre 只美化右栏的 pre 框;第 102 行 pre class="output" 同时吃通用 pre 样式和第 29 行 .output 的黑底青字。</div></div><h4>⭐ 常见疑惑</h4><div class="faq"><p>Q:右栏为什么常驻、不随点击切换?——它回答的是'整页视角'的问题(谁调用谁、数据怎么流),和当前点击哪段无关,所以固定显示。</p></div></div><div class="detail" data-block="9"><p>script 区是网页的'大脑':一小段 JavaScript,让左右两栏'点击互相定位'——这是整个原型唯一的交互功能。</p><h4>📋 逐行拆解</h4><ul><li>第 115 行 <code>&lt;script&gt;</code> —— JS 代码区开始(通常放在 body 末尾,等页面内容加载完再绑事件)。</li><li>第 117~125 行 第一部分:给所有 .codeblock 绑定点击——被点的块加 active 高亮,并找到 data-s 相同的解释块也加高亮、平滑滚动到屏幕中间。</li><li>第 126~134 行 第二部分:给所有 .exp 绑定点击,做反向定位(点解释→滚到代码)。</li><li>document.querySelectorAll 找到所有代码块,forEach 逐个处理,箭头函数 => 是 JS 的'简写函数'。</li></ul><h4>📖 术语与语法(第一次出现,只讲一次)</h4><div class="term"><div class="tname">◆ script 区与 JavaScript</div><div class="trow"><b>语法:</b><code>&lt;script&gt; JS 代码 &lt;/script&gt;</code></div><div class="trow"><b>是什么:</b>JS 是浏览器的编程语言,管'能点什么、点了会怎样';HTML 管结构,CSS 管外观,JS 管行为——前端三件套各司其职。</div><div class="trow"><b>类比:</b>HTML 是骨架,CSS 是皮肤,JS 是肌肉神经。</div><div class="trow"><b>本文件中:</b>本页唯一的 JS 功能:左右联动点击。</div></div><div class="term"><div class="tname">◆ document 与 querySelectorAll</div><div class="trow"><b>语法:</b><code>document.querySelectorAll('.codeblock')</code></div><div class="trow"><b>是什么:</b>document 代表'整个网页文档';querySelectorAll 按选择器(和 CSS 同一套语法)找出所有匹配的标签,返回一队元素。</div><div class="trow"><b>类比:</b>document 是整栋楼,querySelectorAll 是按门牌号找出所有符合条件的房间。</div><div class="trow"><b>本文件中:</b>第 117 行找出全部代码块,第 126 行找出全部解释块。</div></div><div class="term"><div class="tname">◆ 事件与 onclick</div><div class="trow"><b>语法:</b><code>元素.onclick = () => { ... }</code></div><div class="trow"><b>是什么:</b>事件 = 用户动作(点击、输入、滚动……);onclick 特指'被点击时'。给元素绑定 onclick,就是给它装一个'按下就触发'的机关。</div><div class="trow"><b>类比:</b>门铃:手按(事件)→ 铃响(执行代码)。</div><div class="trow"><b>本文件中:</b>本页给 12 个块(6 代码 + 6 解释)各装了一个点击机关。</div></div><div class="term"><div class="tname">◆ 箭头函数(=>)</div><div class="trow"><b>语法:</b><code>(参数) => { 步骤 }</code></div><div class="trow"><b>是什么:</b>JS 里定义函数的简写:箭头左边是参数,右边是步骤。功能等同 function,但更短。</div><div class="trow"><b>类比:</b>速记符号:和'函数'四个字一个意思,写得更快。</div><div class="trow"><b>本文件中:</b>第 118 行 c.onclick = () => {...} 表示'点击后执行大括号里的步骤'。</div></div><div class="term"><div class="tname">◆ classList 与 scrollIntoView</div><div class="trow"><b>语法:</b><code>元素.classList.add('active')</code>;<code>元素.scrollIntoView({behavior:'smooth'})</code></div><div class="trow"><b>是什么:</b>classList.add/remove 给元素加/去一个类名(比如加上 active 就自动套用第 19/22 行的高亮样式);scrollIntoView 让浏览器平滑滚动到该元素位置。</div><div class="trow"><b>类比:</b>classList 是'戴上/摘下号码牌',scrollIntoView 是'摄像机摇过去对准TA'。</div><div class="trow"><b>本文件中:</b>两者配合,就有了'点哪段、亮哪段、滚到哪段'的完整体验。</div></div><h4>⭐ 常见疑惑</h4><div class="faq"><p>Q:为什么两段代码几乎一模一样?——正向(代码→解释)和反向(解释→代码)逻辑互为镜像,复制改两行是最省事也最不容易出错的写法。</p></div></div><div class="detail" data-block="10"><p>闭幕式:body 和 html 收尾标签。检查'成对'是初学者排错的第一招。</p><h4>📋 逐行拆解</h4><ul><li>第 136 行 <code>&lt;/body&gt;&lt;/html&gt;</code> —— 先关 body(前台),再关 html(整棵树),顺序与开头严格相反。</li></ul><h4>📖 术语与语法(第一次出现,只讲一次)</h4><div class="term"><div class="tname">◆ 标签配对检查</div><div class="trow"><b>语法:</b>开标签和闭标签数量、顺序一致</div><div class="trow"><b>是什么:</b>页面显示错乱时,九成是标签没配对:多了、少了、或交叉嵌套。</div><div class="trow"><b>类比:</b>数饺子:包几个就得捏几个褶,露馅必破。</div><div class="trow"><b>本文件中:</b>本页结构:html > head + body;body > header + main;main > 三个 div 栏。层层对应,一个不缺。</div></div><h4>⭐ 常见疑惑</h4><div class="faq"><p>Q:浏览器不是会自动纠错吗,为什么还要严格配对?——浏览器确实会'猜测'补全,但不同浏览器猜法不同,页面就乱了;写对配对才能处处一致。</p></div></div></section><aside class="col" id="col-right"><h2 class="col-title">整体逻辑</h2>
+<h3>🗺️ 一句话概括</h3>
+<p>这是一个<b>静态演示网页</b>:它不联网、不读数据库,把"词频统计.py"程序的源代码(左)、逐段解释(中)、整体逻辑(右)排成三栏,并用一小段 JS 实现"点击左右互相定位"。</p>
+<h3>🔧 结构关系</h3>
+<pre class="tree">html
+├── head(meta、title、style 样式)
+└── body
+    ├── header(页头标题栏)
+    └── main(横向 flex 三栏)
+        ├── 左栏 div.pane.left(6 个代码块)
+        ├── 中栏 div.pane.middle(6 个解释块)
+        └── 右栏 div.pane.right(逻辑/流程/结果)
+script(点击联动)</pre>
+<h3>🌊 内容与交互怎么流</h3>
+<pre class="tree">无数据输入(静态页面)
+交互:点击左栏某代码块
+ → JS 按 data-s 找到同号解释块
+ → 两块同时加 active 高亮
+ → 解释块平滑滚动到视口中央
+(反向:点击解释块 → 定位代码块)</pre>
+<h3>🖼️ 浏览器里看到什么</h3>
+<p>一屏三栏:顶部深蓝标题栏;左侧深色代码栏(六段着色代码);中间白底解释栏;右侧米色逻辑栏(概括、调用树、数据流、黑底终端风格的运行结果、报错清单)。点击任意代码块,对应解释块高亮并滚到中间。</p>
+<h3>⚠️ 最常见的问题</h3>
+<p><b>1. 页面全乱、样式没生效</b><br>多半是 style 标签没闭合,或某条 CSS 少写了分号/大括号。</p>
+<p><b>2. 点了没反应</b><br>检查 script 是否在 body 末尾、data-s 编号左右是否一一对应、JS 控制台(F12)有没有红色报错。</p>
+<p><b>3. 尖括号显示不出来</b><br>想显示 &lt; &gt; 必须写成 &amp;lt; &amp;gt;,否则浏览器当成标签吞掉。</p>
+</aside></main>
+<script>var BLOCKCOUNT=10;
+var cur=1,total=BLOCKCOUNT;
+function show(n){
+  if(n<1)n=1; if(n>total)n=total; cur=n;
+  document.querySelectorAll('.code-block').forEach(function(b){
+    b.classList.toggle('active', +b.dataset.block===n);});
+  document.querySelectorAll('.detail').forEach(function(d){
+    d.classList.toggle('show', +d.dataset.block===n);});
+  document.getElementById('midBadge').textContent='第 '+n+' 段 / 共 '+total+' 段';
+  var t=document.querySelector('.code-block[data-block="'+n+'"]');
+  if(t)t.scrollIntoView({behavior:'smooth',block:'center'});
+  document.getElementById('colExp').scrollTop=0;
+}
+document.querySelectorAll('.code-block').forEach(function(b){
+  b.addEventListener('click',function(){show(+b.dataset.block);});});
+document.getElementById('btnPrev').addEventListener('click',function(){show(cur-1);});
+document.getElementById('btnNext').addEventListener('click',function(){show(cur+1);});
+show(1);
 </script>
-</body>
-</html>
+</body></html>
